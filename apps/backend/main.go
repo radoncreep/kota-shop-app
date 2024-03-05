@@ -4,20 +4,26 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/radoncreep/apps/kota-backend/config"
+	"github.com/radoncreep/apps/kota-backend/routes"
+
 	"github.com/gin-gonic/gin"
 )
 
+func init() {
+	config.LoadEnvVariables()
+	config.ConnectAndMigrateDB()
+}
 
 func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "3000"
+		port = "8080"
 	}
 	router := gin.Default()
 
-	router.GET("/", func(ctx *gin.Context) {
-		ctx.JSON(200, gin.H{"msg": "Welcome to our Kota Shop"})
-	})
+	routes.MenuItemsRoutes(router)
+	routes.ChefRoutes(router)
 
 	fmt.Printf("running on port %v", port)
 	router.Run(":" + port)
