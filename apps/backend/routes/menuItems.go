@@ -15,7 +15,7 @@ func MenuItemsRoutes(router *gin.Engine) {
 	{
 		group.GET("", controllers.GetMany)
 		group.GET("/:id", controllers.GetOne)
-		group.POST("/", controllers.CreateMenu)
+		group.POST("", controllers.CreateMenu)
 		group.PUT("/:id", controllers.UpdateMenu)
 		group.DELETE("/:id", controllers.DeletOne)
 	}
