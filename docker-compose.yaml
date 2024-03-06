@@ -6,28 +6,33 @@ services:
       context: ./apps/backend
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - '8080:8080'
     env_file:
       - .env
     depends_on:
-      - "kota-db"
- 
+      - 'kota-db'
+
   kota-db:
     image: postgres
-    ports: 
-      - "5432:5432"
+    ports:
+      - '5432:5432'
     restart: always
-    env_file: 
-     - .env
+    env_file:
+      - .env
     environment:
       - POSTGRES_PASSWORD=${KOTA_DB_PASSWORD}
       - POSTGRES_USER=${KOTA_DB_USER}
       - POSTGRES_NAME=${KOTA_DB_NAME}
       - POSTGRES_HOST=${KOTA_DB_HOST}
-
     volumes:
       - kota-db-vol:/var/lib/postgresql/data
 
+  kota-frontend:
+    build:
+      context: ./apps/frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+
 volumes:
   kota-db-vol:
-    
