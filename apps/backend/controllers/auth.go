@@ -107,7 +107,8 @@ func LoginChef(ctx *gin.Context) {
 	}
 
 	ctx.SetSameSite(http.SameSiteLaxMode)
-	ctx.SetCookie("Authorization", accessToken, 3600 * 24, "", "", false, true)
+	domain := os.Getenv("DOMAIN")
+	ctx.SetCookie("Authorization", accessToken, 3600 * 24, "/", domain, false, false)
 
 	ctx.JSON(http.StatusOK, gin.H{ "message": "success" })
 }

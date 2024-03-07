@@ -13,7 +13,11 @@
     "@chakra-ui/react": "^2.8.2",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.0",
+    "@tanstack/react-query": "^5.25.0",
+    "axios": "^1.6.7",
     "framer-motion": "^11.0.8",
+    "humps": "^2.0.1",
+    "js-cookie": "^3.0.5",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.4",
     "react": "^18.2.0",
@@ -22,6 +26,8 @@
     "sort-by": "^1.2.0"
   },
   "devDependencies": {
+    "@types/humps": "^2.0.6",
+    "@types/js-cookie": "^3.0.6",
     "@types/react": "^18.2.56",
     "@types/react-dom": "^18.2.19",
     "@typescript-eslint/eslint-plugin": "^7.0.2",

@@ -8,13 +8,9 @@ import (
 
 
 func ChefRoutes(router *gin.Engine) {
-	group := router.Group("/chef")
+	group := router.Group("/auth")
 	{
 		group.POST("/register", controllers.RegisterChef)
 		group.POST("/login", controllers.LoginChef)
-		// group.GET("", controllers.)
-		// group.GET("/:id", controllers.GetOne)
-		// group.PUT("/:id", controllers.UpdateMenu)
-		// group.DELETE("/:id", controllers.DeletOne)
 	}
 }

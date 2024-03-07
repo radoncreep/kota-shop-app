@@ -1,9 +1,15 @@
-import { Box, Flex, Text } from "@chakra-ui/layout";
-import { MenuItemInventory, SideNavbar } from "../components";
-import { Center, HStack, Image, VStack } from "@chakra-ui/react";
-import { DashboardOverview, Overview } from "../lib/dashboard-overview";
+import { Box, Flex, Text } from "@chakra-ui/layout"
+import { MenuItemInventory, SideNavbar } from "../components"
+import { Center, HStack, Image, Progress, VStack } from "@chakra-ui/react"
+import { DashboardOverview, Overview } from "../lib/dashboard-overview"
 
 export default function DashboardPage() {
+  // console.log({ isLoading })
+  // if (isLoading) {
+  //   return <Progress size="xs" isIndeterminate />
+  // }
+
+  // console.log(data)
   return (
     <Flex justifyContent="space-between">
       <SideNavbar />
@@ -13,7 +19,7 @@ export default function DashboardPage() {
 
         <Flex alignItems="center" columnGap={10}>
           {DashboardOverview.map((data, index) => {
-            return <DashboardCard key={index} {...data} />;
+            return <DashboardCard key={index} {...data} />
           })}
         </Flex>
 
@@ -22,10 +28,10 @@ export default function DashboardPage() {
         </Box>
       </Box>
     </Flex>
-  );
+  )
 }
 
-type Data = Overview;
+type Data = Overview
 
 function DashboardCard(props: Data) {
   return (
@@ -43,5 +49,5 @@ function DashboardCard(props: Data) {
         </VStack>
       </HStack>
     </Center>
-  );
+  )
 }

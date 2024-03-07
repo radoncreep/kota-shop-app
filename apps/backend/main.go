@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/radoncreep/apps/kota-backend/config"
+	"github.com/radoncreep/apps/kota-backend/middleware"
 	"github.com/radoncreep/apps/kota-backend/routes"
 
 	"github.com/gin-gonic/gin"
@@ -15,12 +16,14 @@ func init() {
 	config.ConnectAndMigrateDB()
 }
 
+
 func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
 	router := gin.Default()
+	router.Use(middleware.CORSMiddleware())
 
 	routes.MenuItemsRoutes(router)
 	routes.ChefRoutes(router)

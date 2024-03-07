@@ -79,7 +79,7 @@ func CreateMenu(ctx *gin.Context) {
 		return 
 	}
 
-	ctx.JSON(http.StatusCreated, gin.H{"message": "success", "menuItem": &menuItems})
+	ctx.JSON(http.StatusCreated, &menuItems)
 }
 
 func UpdateMenu(ctx *gin.Context) {
@@ -131,7 +131,7 @@ func UpdateMenu(ctx *gin.Context) {
         return
     }
 
-    ctx.JSON(http.StatusOK, gin.H{"data": updatedMenuItem})
+    ctx.JSON(http.StatusOK, updatedMenuItem)
 }
 
 func GetOne(ctx *gin.Context) {
@@ -148,7 +148,7 @@ func GetOne(ctx *gin.Context) {
         return
     }
 
-    ctx.JSON(http.StatusOK, gin.H{"menuItem": menuItem})
+    ctx.JSON(http.StatusOK, menuItem)
 }
 
 func GetMany(ctx *gin.Context) {
@@ -157,13 +157,12 @@ func GetMany(ctx *gin.Context) {
 
 	if res.Error != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"message": "failed",
 			"error": "Failed to retrieve menu items",
 		})
 		return 
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"message": "success", "menuItem": &menuItems})
+	ctx.JSON(http.StatusOK, &menuItems)
 }
 
 func DeletOne(ctx *gin.Context) {
