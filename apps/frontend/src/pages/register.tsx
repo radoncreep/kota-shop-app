@@ -13,17 +13,19 @@ import {
   Text,
 } from "@chakra-ui/react"
 import { ChangeEvent, useRef, useState } from "react"
-import { useLogin } from "../hooks/auth"
+import { useRegister } from "../hooks/auth"
 import { Link, useNavigate } from "react-router-dom"
 
-export default function LoginPage() {
-  const { mutate } = useLogin()
+export default function RegisterPage() {
+  const { mutate } = useRegister()
   const toast = useToast()
   const navigate = useNavigate()
 
   const [showPassword, setShowPassword] = useState(false)
   const emailInputRef = useRef<HTMLInputElement | null>(null)
   const passwordInputRef = useRef<HTMLInputElement | null>(null)
+  const firstNameInputRef = useRef<HTMLInputElement | null>(null)
+  const lastNameInputRef = useRef<HTMLInputElement | null>(null)
 
   function handleShowPassword() {
     setShowPassword((prev) => !prev)
@@ -41,14 +43,37 @@ export default function LoginPage() {
     }
   }
 
+  function handleOnChangeFirstName(e: ChangeEvent<HTMLInputElement>) {
+    if (firstNameInputRef?.current) {
+      firstNameInputRef.current.value = e.target.value
+    }
+  }
+
+  function handleOnChangeLastName(e: ChangeEvent<HTMLInputElement>) {
+    if (lastNameInputRef?.current) {
+      lastNameInputRef.current.value = e.target.value
+    }
+  }
+
   function handleSubmit() {
     const email = emailInputRef ? emailInputRef.current?.value ?? "" : ""
     const password = passwordInputRef
       ? passwordInputRef.current?.value ?? ""
       : ""
+    const firstname = firstNameInputRef
+      ? firstNameInputRef.current?.value ?? ""
+      : ""
+    const lastname = lastNameInputRef
+      ? lastNameInputRef.current?.value ?? ""
+      : ""
 
     mutate(
-      { email, password },
+      {
+        email,
+        password,
+        firstname,
+        lastname,
+      },
       {
         onSuccess: () => {
           console.log("success")
@@ -57,7 +82,7 @@ export default function LoginPage() {
             position: "top-right",
             status: "success",
           })
-          navigate("../", { replace: true })
+          navigate("../login", { replace: true })
         },
         onError: (err) => {
           toast({
@@ -75,10 +100,38 @@ export default function LoginPage() {
     <Flex height="100vh" alignItems="center" justifyContent="center">
       <Container my="auto" p={10} borderRadius="md" boxShadow="md">
         <Heading size="md" color="#000" mb={10}>
-          Login to Account
+          Register an account
         </Heading>
 
         <VStack align="left" spacing={10}>
+          <FormControl>
+            <FormLabel color="#000">First name</FormLabel>
+            <Input
+              ref={firstNameInputRef}
+              type="email"
+              placeholder="example@example.com"
+              onChange={handleOnChangeFirstName}
+              color="#000"
+              borderColor="#000"
+              _hover={{
+                borderColor: "#000",
+              }}
+            />
+          </FormControl>
+          <FormControl>
+            <FormLabel color="#000">Last name</FormLabel>
+            <Input
+              ref={lastNameInputRef}
+              type="email"
+              placeholder="example@example.com"
+              onChange={handleOnChangeLastName}
+              color="#000"
+              borderColor="#000"
+              _hover={{
+                borderColor: "#000",
+              }}
+            />
+          </FormControl>
           <FormControl>
             <FormLabel color="#000">Email address</FormLabel>
             <Input
@@ -128,13 +181,13 @@ export default function LoginPage() {
             }}
             onClick={handleSubmit}
           >
-            Login
+            Register
           </Button>
 
           <Box mt={2} alignSelf="flex-end">
-            <Link to={"/register"}>
+            <Link to={"/login"}>
               <Text textDecoration="underline" color="black">
-                Register
+                Login
               </Text>
             </Link>
           </Box>

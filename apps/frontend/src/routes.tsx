@@ -1,27 +1,32 @@
-import { createBrowserRouter } from 'react-router-dom'
+import { createBrowserRouter } from "react-router-dom"
 
-import DashboardPage from './pages/dashboard'
-import LoginPage from './pages/login'
-import { ProtectedRoutes } from './components'
+import DashboardPage from "./pages/dashboard"
+import LoginPage from "./pages/login"
+import { ProtectedRoutes } from "./components"
+import RegisterPage from "./pages/register"
 
 export const appRouter = createBrowserRouter([
   {
-    path: '/login',
+    path: "/login",
     element: <LoginPage />,
+  },
+  {
+    path: "/register",
+    element: <RegisterPage />,
   },
   {
     element: <ProtectedRoutes />,
     children: [
       {
-        path: '/',
+        path: "/",
         element: <DashboardPage />,
       },
       {
-        path: '/menu',
+        path: "/menu",
         element: <DashboardPage />,
       },
       {
-        path: '/orders',
+        path: "/orders",
         element: <DashboardPage />,
       },
     ],
