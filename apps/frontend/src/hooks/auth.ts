@@ -1,7 +1,6 @@
-import { useMutation } from '@tanstack/react-query'
-// import Cookies from 'js-cookie'
+import { useMutation } from "@tanstack/react-query"
 
-import { login } from '../api/auth'
+import { login } from "../api/auth"
 
 export const useLogin = () => {
   return useMutation({

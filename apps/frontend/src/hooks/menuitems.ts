@@ -1,6 +1,10 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { CreateMenuItem, getMenuItems, updateMenuItem } from "../api/menuitems"
-import { MenuItem } from "../entities/menuitem"
+import {
+  CreateMenuItem,
+  UpdateMenuItem,
+  getMenuItems,
+  mutateMenuItem,
+} from "../api/menuitems"
 
 export const useMenuItems = () => {
   return useQuery({
@@ -11,6 +15,14 @@ export const useMenuItems = () => {
 
 export const useUpdateMenuItem = () => {
   return useMutation({
-    mutationFn: (menuitem: CreateMenuItem) => updateMenuItem(menuitem),
+    mutationFn: (menuitem: UpdateMenuItem) =>
+      mutateMenuItem(menuitem, "UPDATE"),
+  })
+}
+
+export const useCreateMenuItem = () => {
+  return useMutation({
+    mutationFn: (menuitem: CreateMenuItem) =>
+      mutateMenuItem(menuitem, "CREATE"),
   })
 }

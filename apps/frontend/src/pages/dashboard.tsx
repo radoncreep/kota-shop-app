@@ -1,20 +1,22 @@
 import { Box, Flex, Text } from "@chakra-ui/layout"
 import { MenuItemInventory, SideNavbar } from "../components"
-import { Center, HStack, Image, Progress, VStack } from "@chakra-ui/react"
+import {
+  Button,
+  Center,
+  HStack,
+  Image,
+  Progress,
+  VStack,
+} from "@chakra-ui/react"
 import { DashboardOverview, Overview } from "../lib/dashboard-overview"
+import CreateNewMenuItem from "../components/createNewItem"
 
 export default function DashboardPage() {
-  // console.log({ isLoading })
-  // if (isLoading) {
-  //   return <Progress size="xs" isIndeterminate />
-  // }
-
-  // console.log(data)
   return (
     <Flex justifyContent="space-between">
       <SideNavbar />
 
-      <Box flexGrow={1} p={10}>
+      <Flex direction="column" alignItems="center">
         <Box height="6rem" />
 
         <Flex alignItems="center" columnGap={10}>
@@ -23,10 +25,12 @@ export default function DashboardPage() {
           })}
         </Flex>
 
+        <CreateNewMenuItem />
+
         <Box width="70%" py={10}>
           <MenuItemInventory />
         </Box>
-      </Box>
+      </Flex>
     </Flex>
   )
 }

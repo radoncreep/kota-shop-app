@@ -3,7 +3,6 @@ export type MenuItem = {
   name: string
   quantity: number
   price: number
-  quantitySold: number
   imageUrl: string
   description: string
 }

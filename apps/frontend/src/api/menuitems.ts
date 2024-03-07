@@ -1,7 +1,11 @@
 import { MenuItem } from "../entities/menuitem"
 import { axiosInstance } from "./client"
 
-export interface CreateMenuItem extends Pick<MenuItem, "iD" | "imageUrl"> {
+export interface CreateMenuItem extends Omit<MenuItem, "iD" | "imageUrl"> {
+  image: File
+}
+
+export interface UpdateMenuItem extends Omit<MenuItem, "imageUrl"> {
   image: File
 }
 
@@ -20,8 +24,9 @@ export async function createMenuItem(
   return (await axiosInstance.post(`/menuitems`, payload)).data
 }
 
-export async function updateMenuItem(
-  payload: CreateMenuItem
+export async function mutateMenuItem(
+  payload: CreateMenuItem | UpdateMenuItem,
+  type: "CREATE" | "UPDATE"
 ): Promise<MenuItem[]> {
   const formData = new FormData()
   Object.entries(payload).forEach(([key, value]) => {
@@ -31,8 +36,20 @@ export async function updateMenuItem(
     }
     formData.append(key, value)
   })
+
+  if (type === "CREATE") {
+    return (
+      await axiosInstance.post(`/menuitems`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+    ).data
+  }
+
+  const data = payload as UpdateMenuItem
   return (
-    await axiosInstance.put(`/menuitems/${payload.iD}`, formData, {
+    await axiosInstance.put(`/menuitems/${data.iD}`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

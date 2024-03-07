@@ -97,9 +97,9 @@ export default function EditInventoryItem({ show, menuItem, onClose }: Props) {
           onClose()
         },
         onError: (error) => {
-          console.log(error)
           toast({
             title: "Failed to update",
+            description: error.message,
             status: "error",
           })
         },
@@ -140,7 +140,7 @@ export default function EditInventoryItem({ show, menuItem, onClose }: Props) {
             <FormControl>
               <FormLabel color="#fff">Description</FormLabel>
               <Input
-                name="name"
+                name="description"
                 value={updatedMenuItem.description}
                 color="#green"
                 borderColor="#fff"
@@ -150,7 +150,7 @@ export default function EditInventoryItem({ show, menuItem, onClose }: Props) {
             <FormControl>
               <FormLabel color="#fff">Price</FormLabel>
               <Input
-                name="name"
+                name="price"
                 value={updatedMenuItem.price}
                 color="#green"
                 borderColor="#fff"
@@ -160,7 +160,7 @@ export default function EditInventoryItem({ show, menuItem, onClose }: Props) {
             <FormControl>
               <FormLabel color="#fff">Quantity</FormLabel>
               <Input
-                name="name"
+                name="quantity"
                 value={updatedMenuItem.quantity}
                 color="#green"
                 borderColor="#fff"
