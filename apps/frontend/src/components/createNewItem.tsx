@@ -49,6 +49,7 @@ export default function CreateNewMenuItem() {
 
   function handleChange(e: ChangeEvent<HTMLInputElement>, input: string) {
     const value = e.target.value
+    console.log({ value })
     if (input === "name" && nameInputRef?.current) {
       nameInputRef.current.value = value
     }
@@ -147,7 +148,7 @@ export default function CreateNewMenuItem() {
                     name="name"
                     ref={nameInputRef}
                     // value={updatedMenuItem.name}
-                    color="#green"
+                    color="#fff"
                     borderColor="#fff"
                     onChange={(e) => handleChange(e, "name")}
                   />
@@ -158,7 +159,7 @@ export default function CreateNewMenuItem() {
                     name="description"
                     ref={descriptionInputRef}
                     // value={updatedMenuItem.description}
-                    color="#green"
+                    color="#fff"
                     borderColor="#fff"
                     onChange={(e) => handleChange(e, "description")}
                   />
@@ -169,7 +170,7 @@ export default function CreateNewMenuItem() {
                     ref={priceInputRef}
                     name="price"
                     // value={updatedMenuItem.price}
-                    color="#green"
+                    color="#fff"
                     borderColor="#fff"
                     onChange={(e) => handleChange(e, "price")}
                   />
@@ -180,7 +181,7 @@ export default function CreateNewMenuItem() {
                     ref={quantityInputRef}
                     name="quantity"
                     // value={updatedMenuItem.quantity}
-                    color="#green"
+                    color="#fff"
                     borderColor="#fff"
                     onChange={(e) => handleChange(e, "quantity")}
                   />

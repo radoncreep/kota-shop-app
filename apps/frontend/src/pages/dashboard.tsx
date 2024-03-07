@@ -16,9 +16,7 @@ export default function DashboardPage() {
     <Flex justifyContent="space-between">
       <SideNavbar />
 
-      <Flex direction="column" alignItems="center">
-        <Box height="6rem" />
-
+      <Flex direction="column" alignItems="center" my="4rem" flexGrow={1}>
         <Flex alignItems="center" columnGap={10}>
           {DashboardOverview.map((data, index) => {
             return <DashboardCard key={index} {...data} />

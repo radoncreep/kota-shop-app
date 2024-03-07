@@ -14,6 +14,10 @@ export default function InventoryItems() {
     return <Progress isIndeterminate size="xs" />
   }
 
+  if (!data && !isLoading) {
+    return <Text>You have no existing menu items, create one!</Text>
+  }
+
   function handleShowDrawer(item: MenuItem) {
     setShow((prev) => !prev)
     setEditItem(item)
