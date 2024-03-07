@@ -37,7 +37,7 @@ export default function InventoryItems() {
             onClick={() => handleShowDrawer(item)}
           >
             <Image
-              src=""
+              src="/images/kota_food1.jpg"
               fallback={<Box bgColor="orange" width="100%" height="10rem" />}
             />
             <Box p={2}>
