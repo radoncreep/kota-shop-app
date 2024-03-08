@@ -13,11 +13,12 @@ import {
   Input,
   VStack,
   useToast,
+  Text,
 } from "@chakra-ui/react"
 import { ChangeEvent, useRef, useState } from "react"
 import { CreateMenuItem } from "../api/menuitems"
 import { useCreateMenuItem } from "../hooks/menuitems"
-import { QueryClient } from "@tanstack/react-query"
+import { useQueryClient } from "@tanstack/react-query"
 
 export default function CreateNewMenuItem() {
   const [show, setShow] = useState(false)
@@ -32,7 +33,7 @@ export default function CreateNewMenuItem() {
 
   const btnRef = useRef<any>()
   const toast = useToast()
-  const queryClient = new QueryClient()
+  const queryClient = useQueryClient()
 
   const mutation = useCreateMenuItem()
 
@@ -49,7 +50,6 @@ export default function CreateNewMenuItem() {
 
   function handleChange(e: ChangeEvent<HTMLInputElement>, input: string) {
     const value = e.target.value
-    console.log({ value })
     if (input === "name" && nameInputRef?.current) {
       nameInputRef.current.value = value
     }
@@ -96,6 +96,7 @@ export default function CreateNewMenuItem() {
         })
         queryClient.invalidateQueries({ queryKey: ["menuitems"] })
         handleClose()
+        setSelectedImage(null)
       },
       onError: (error) => {
         toast({
@@ -103,12 +104,13 @@ export default function CreateNewMenuItem() {
           description: error.message,
           status: "error",
         })
+        setSelectedImage(null)
       },
     })
   }
 
   return (
-    <Box mt={10} width="70%">
+    <Box mt={10} width="100%">
       <Box width="100%">
         <Button
           borderRadius="md"
@@ -117,6 +119,7 @@ export default function CreateNewMenuItem() {
           _hover={{
             bgColor: "none",
           }}
+          size="lg"
         >
           Add New Menu Item
         </Button>
@@ -130,60 +133,80 @@ export default function CreateNewMenuItem() {
           finalFocusRef={btnRef}
         >
           <DrawerOverlay />
-          <DrawerContent bg="black">
+          <DrawerContent bg="gray.50">
             <DrawerCloseButton />
             <DrawerHeader>Create Item</DrawerHeader>
 
             <DrawerBody>
               <VStack spacing={4}>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileInputChange}
-                />
+                <FormControl>
+                  <FormLabel color="#000">Select Image</FormLabel>
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileInputChange}
+                    px={0}
+                    _hover={{
+                      borderColor: "none",
+                    }}
+                  />
+                  {selectedImage && (
+                    <Text color="#000">{selectedImage.name}</Text>
+                  )}
+                </FormControl>
 
                 <FormControl>
-                  <FormLabel color="#fff">Name</FormLabel>
+                  <FormLabel color="#000">Name</FormLabel>
                   <Input
                     name="name"
                     ref={nameInputRef}
                     // value={updatedMenuItem.name}
-                    color="#fff"
-                    borderColor="#fff"
+                    color="#000"
+                    borderColor="#000"
                     onChange={(e) => handleChange(e, "name")}
+                    _hover={{
+                      borderColor: "none",
+                    }}
                   />
                 </FormControl>
                 <FormControl>
-                  <FormLabel color="#fff">Description</FormLabel>
+                  <FormLabel color="#000">Description</FormLabel>
                   <Input
                     name="description"
                     ref={descriptionInputRef}
-                    // value={updatedMenuItem.description}
-                    color="#fff"
-                    borderColor="#fff"
+                    color="#000"
+                    borderColor="#000"
                     onChange={(e) => handleChange(e, "description")}
+                    _hover={{
+                      borderColor: "none",
+                    }}
                   />
                 </FormControl>
                 <FormControl>
-                  <FormLabel color="#fff">Price</FormLabel>
+                  <FormLabel color="#000">Price</FormLabel>
                   <Input
                     ref={priceInputRef}
                     name="price"
-                    // value={updatedMenuItem.price}
-                    color="#fff"
-                    borderColor="#fff"
+                    color="#000"
+                    borderColor="#000"
                     onChange={(e) => handleChange(e, "price")}
+                    _hover={{
+                      borderColor: "none",
+                    }}
                   />
                 </FormControl>
                 <FormControl>
-                  <FormLabel color="#fff">Quantity</FormLabel>
+                  <FormLabel color="#000">Quantity</FormLabel>
                   <Input
                     ref={quantityInputRef}
                     name="quantity"
                     // value={updatedMenuItem.quantity}
-                    color="#fff"
-                    borderColor="#fff"
+                    color="#000"
+                    borderColor="#000"
                     onChange={(e) => handleChange(e, "quantity")}
+                    _hover={{
+                      borderColor: "none",
+                    }}
                   />
                 </FormControl>
               </VStack>
@@ -191,10 +214,10 @@ export default function CreateNewMenuItem() {
 
             <DrawerFooter>
               <Button variant="outline" bg="red" mr={3} onClick={handleClose}>
-                Delete
+                Cancel
               </Button>
               <Button
-                colorScheme="green"
+                bgColor="orange.400"
                 onClick={handleSubmit}
                 disabled={errorMessage !== null}
               >

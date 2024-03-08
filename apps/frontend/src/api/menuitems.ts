@@ -56,3 +56,7 @@ export async function mutateMenuItem(
     })
   ).data
 }
+
+export async function deleteMenuItem(id: MenuItem["iD"]) {
+  return await axiosInstance.delete(`/menuitems/${id}`)
+}

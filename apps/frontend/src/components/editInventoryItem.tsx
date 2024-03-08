@@ -12,10 +12,11 @@ import {
   FormControl,
   FormLabel,
   useToast,
+  Text,
 } from "@chakra-ui/react"
 import { MenuItem } from "../entities/menuitem"
 import { ChangeEvent, useEffect, useRef, useState } from "react"
-import { useUpdateMenuItem } from "../hooks/menuitems"
+import { useDeleteMenuItem, useUpdateMenuItem } from "../hooks/menuitems"
 import { useQueryClient } from "@tanstack/react-query"
 
 type Props = {
@@ -28,6 +29,7 @@ type Props = {
 export default function EditInventoryItem({ show, menuItem, onClose }: Props) {
   const queryClient = useQueryClient()
   const mutation = useUpdateMenuItem()
+  const deleteMutation = useDeleteMenuItem()
   const toast = useToast()
   const btnRef = useRef<any>()
   const [updatedMenuItem, setUpdateMenuItem] = useState<MenuItem>({
@@ -107,6 +109,24 @@ export default function EditInventoryItem({ show, menuItem, onClose }: Props) {
     )
   }
 
+  function handleDelete(menuItemId: MenuItem["iD"]) {
+    deleteMutation.mutate(menuItemId, {
+      onSuccess: () => {
+        toast({
+          title: "Item deleted",
+          status: "success",
+        })
+        onClose()
+      },
+      onError: () => {
+        toast({
+          title: "Failed to delete item",
+          status: "error",
+        })
+      },
+    })
+  }
+
   return (
     <Drawer
       isOpen={show}
@@ -115,26 +135,37 @@ export default function EditInventoryItem({ show, menuItem, onClose }: Props) {
       finalFocusRef={btnRef}
     >
       <DrawerOverlay />
-      <DrawerContent bg="black">
-        <DrawerCloseButton />
+      <DrawerContent bg="gray.50">
+        <DrawerCloseButton color="#000" />
         <DrawerHeader>Edit Item</DrawerHeader>
 
         <DrawerBody>
           <VStack spacing={4}>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileInputChange}
-            />
+            <FormControl>
+              <FormLabel color="#000">Select Image</FormLabel>
+              <Input
+                type="file"
+                accept="image/*"
+                onChange={handleFileInputChange}
+                px={0}
+                _hover={{
+                  borderColor: "none",
+                }}
+              />
+              {selectedImage && <Text color="#000">{selectedImage.name}</Text>}
+            </FormControl>
 
             <FormControl>
               <FormLabel color="#fff">Name</FormLabel>
               <Input
                 name="name"
                 value={updatedMenuItem.name}
-                color="#green"
-                borderColor="#fff"
+                color="#000"
+                borderColor="#000"
                 onChange={(e) => handleChange(e, "name")}
+                _hover={{
+                  borderColor: "#000",
+                }}
               />
             </FormControl>
             <FormControl>
@@ -142,9 +173,12 @@ export default function EditInventoryItem({ show, menuItem, onClose }: Props) {
               <Input
                 name="description"
                 value={updatedMenuItem.description}
-                color="#green"
-                borderColor="#fff"
+                color="#000"
+                borderColor="#000"
                 onChange={(e) => handleChange(e, "description")}
+                _hover={{
+                  borderColor: "#000",
+                }}
               />
             </FormControl>
             <FormControl>
@@ -152,9 +186,12 @@ export default function EditInventoryItem({ show, menuItem, onClose }: Props) {
               <Input
                 name="price"
                 value={updatedMenuItem.price}
-                color="#green"
-                borderColor="#fff"
+                color="#000"
+                borderColor="#000"
                 onChange={(e) => handleChange(e, "price")}
+                _hover={{
+                  borderColor: "#000",
+                }}
               />
             </FormControl>
             <FormControl>
@@ -162,24 +199,33 @@ export default function EditInventoryItem({ show, menuItem, onClose }: Props) {
               <Input
                 name="quantity"
                 value={updatedMenuItem.quantity}
-                color="#green"
-                borderColor="#fff"
+                color="#000"
+                borderColor="#000"
                 onChange={(e) => handleChange(e, "quantity")}
+                _hover={{
+                  borderColor: "#000",
+                }}
               />
             </FormControl>
           </VStack>
         </DrawerBody>
 
         <DrawerFooter>
-          <Button variant="outline" bg="red" mr={3} onClick={onClose}>
+          <Button
+            isLoading={deleteMutation.isPending}
+            variant="outline"
+            bg="red"
+            mr={3}
+            onClick={() => handleDelete(menuItem.iD)}
+          >
             Delete
           </Button>
           <Button
-            colorScheme="green"
+            bgColor="orange.400"
             onClick={handleSaveItemEdit}
             disabled={errorMessage !== null}
           >
-            Save
+            Edit
           </Button>
         </DrawerFooter>
       </DrawerContent>
