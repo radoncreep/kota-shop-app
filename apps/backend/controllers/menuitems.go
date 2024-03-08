@@ -83,6 +83,18 @@ func CreateMenu(ctx *gin.Context) {
 }
 
 func UpdateMenu(ctx *gin.Context) {
+	chef, exists := ctx.Get("chef")
+    if !exists {
+        ctx.JSON(http.StatusForbidden, gin.H{"error": "Invalid chef"})
+        return
+    }
+
+	chefInstance, ok := chef.(*models.Chef)
+    if !ok {
+        ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid chef"})
+        return
+    }
+
 	menuItemidParam := ctx.Param("id")
     menuItemId, err := strconv.Atoi(menuItemidParam)
     if err != nil {
@@ -96,13 +108,18 @@ func UpdateMenu(ctx *gin.Context) {
         return
     }
 
-	Name := ctx.PostForm("name")
-	Description := ctx.PostForm("description")
-	Price := ctx.PostForm("price")
-	Quantity := ctx.PostForm("quantity")
+	if menuItem.ChefID != chefInstance.ID {
+        ctx.JSON(http.StatusForbidden, gin.H{"error": "Menu item does not belong to the chef"})
+        return
+    }
 
-	price, err1 := strconv.ParseUint(Price, 10, 64)
-	quantity, err2 := strconv.ParseUint(Quantity, 10, 64)
+	updatedName := ctx.PostForm("name")
+	updatedDescription := ctx.PostForm("description")
+	updatedPrice := ctx.PostForm("price")
+	updatedQuantity := ctx.PostForm("quantity")
+
+	price, err1 := strconv.ParseUint(updatedPrice, 10, 64)
+	quantity, err2 := strconv.ParseUint(updatedQuantity, 10, 64)
 	
 	if err1 != nil || err2 != nil {
 		ctx.JSON(500, gin.H{"error": err1, "erro2": err2})
@@ -115,23 +132,20 @@ func UpdateMenu(ctx *gin.Context) {
 		return
 	}
 
-	filename := filepath.Join("images/menuitem", image.Filename)
+	updatedImage := filepath.Join("images/menuitem", image.Filename)
 
-	updatedMenuItem := models.MenuItem {
-		ID: menuItem.ID,
-		Name: Name,
-		Description: Description,
-		Price: uint(price),
-		Quantity: uint(quantity),
-		ImageUrl: filename,
-	}
+	menuItem.Name = updatedName
+	menuItem.Description = updatedDescription
+	menuItem.ImageUrl =  updatedImage
+	menuItem.Price = uint(price)
+	menuItem.Quantity = uint(quantity)
 
-    if err := config.DB.Save(&updatedMenuItem).Error; err != nil {
+    if err := config.DB.Save(&menuItem).Error; err != nil {
         ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update item"})
         return
     }
 
-    ctx.JSON(http.StatusOK, updatedMenuItem)
+    ctx.JSON(http.StatusOK, menuItem)
 }
 
 func GetOne(ctx *gin.Context) {
