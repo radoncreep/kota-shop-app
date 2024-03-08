@@ -39,7 +39,7 @@ This is a full stack application with concise CRUD functionalities.
 ## Setup and Installation
 
 1. Clone the repository.
-2. Set up environment variables using the env template in the root dir and each project level layer.
+2. Included env files for the purpose of running the application smoothly, so you dont have to set them up yourself
 3. Build and run the application using Docker Compose.
 
 ## Usage
@@ -48,7 +48,7 @@ You should have 3 containers running for the frontend, backend and database.
 
 ## Improvements
 
-- Proper payload validation for routes on the backend
+- using uuid id instead of uint with autoincrement (kept it simple)
 - the use of refresh tokens for long lived sessions
 - integrate an in-memory database like redis to cache refresh tokens. Probably not responses, not a lot of traffic for this use case
 - use multi-stage build to reduce image size and volumes to reflect change in development
