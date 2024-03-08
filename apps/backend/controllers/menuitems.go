@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 	"path/filepath"
 	"strconv"
@@ -12,18 +11,15 @@ import (
 )
 
 func CreateMenu(ctx *gin.Context) {
-	_, exists := ctx.Get("chef")
-	
+	chef, exists := ctx.Get("chef")
 	if !exists {
-		ctx.JSON(http.StatusForbidden, gin.H{"message": "failed", "error": "Invalid user" })
+		ctx.JSON(http.StatusForbidden, gin.H{"error": "Invalid chef" })
 	}
 
 	Name := ctx.PostForm("name")
 	Description := ctx.PostForm("description")
 	Price := ctx.PostForm("price")
 	Quantity := ctx.PostForm("quantity")
-
-	fmt.Printf("price %v and quantity %v", Price, Quantity)
 
 	price, err1 := strconv.ParseUint(Price, 10, 64)
 	quantity, err2 := strconv.ParseUint(Quantity, 10, 64)
@@ -43,37 +39,41 @@ func CreateMenu(ctx *gin.Context) {
 
 	if err := ctx.SaveUploadedFile(image, filename); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Failed",
 			"error": "Failed to save image from payload",
 		})
 		return
 	}
 
+	chefInstance, ok := chef.(*models.Chef) 
+	if !ok {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"error": "couldn't find chef",
+		})
+		return
+	}
 	newMenuItem := models.MenuItem {
 		Name: Name,
 		Description: Description,
 		Price: uint(price),
 		Quantity: uint(quantity),
 		ImageUrl: filename,
+		ChefID: chefInstance.ID,
 	}
 
 	result := config.DB.Create(&newMenuItem)
 
 	if result.Error != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"message": "failed",
 			"error": "Failed to create menu item",
 		})
 		return 
 	}
 
-	//TODO: find all that belongs to chef 
 	var menuItems []models.MenuItem
-	res := config.DB.Find(&menuItems)
+	res := config.DB.Preload("Chef").Find(&menuItems)
 
 	if res.Error != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"message": "failed",
 			"error": "Failed to retrieve menu items",
 		})
 		return 
@@ -135,6 +135,16 @@ func UpdateMenu(ctx *gin.Context) {
 }
 
 func GetOne(ctx *gin.Context) {
+	chef, exists := ctx.Get("chef")
+	if !exists {
+		ctx.JSON(http.StatusForbidden, gin.H{"error": "Invalid chef" })
+	}
+	
+	chefInstance, ok := chef.(*models.Chef)
+	if !ok {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid chef"})
+	}
+
 	menuItemidParam := ctx.Param("id")
     menuItemId, err := strconv.Atoi(menuItemidParam)
     if err != nil {
@@ -143,8 +153,13 @@ func GetOne(ctx *gin.Context) {
     }
 
     var menuItem models.MenuItem
-    if err := config.DB.First(&menuItem, menuItemId).Error; err != nil {
+	result := config.DB.Preload("Chef").First(&menuItem, menuItemId)
+	if result.Error != nil {
         ctx.JSON(http.StatusNotFound, gin.H{"error": "Menu item not found"})
+        return
+    }
+	if menuItem.ChefID != chefInstance.ID {
+        ctx.JSON(http.StatusForbidden, gin.H{"error": "Menu item does not belong to the chef"})
         return
     }
 
@@ -152,19 +167,62 @@ func GetOne(ctx *gin.Context) {
 }
 
 func GetMany(ctx *gin.Context) {
-	var menuItems []models.MenuItem
-	res := config.DB.Find(&menuItems)
-
-	if res.Error != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Failed to retrieve menu items",
-		})
-		return 
+	chef, exists := ctx.Get("chef")
+	if !exists {
+		ctx.JSON(http.StatusForbidden, gin.H{"error": "Invalid chef" })
 	}
+	
+	chefInstance, ok := chef.(*models.Chef)
+	if !ok {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid chef"})
+	}
+	var menuItems []models.MenuItem
+	result := config.DB.Preload("Chef").Where("chef_id = ?", chefInstance.ID).Find(&menuItems)
+    if result.Error != nil {
+        ctx.JSON(http.StatusBadRequest, gin.H{"error": "No menu items associated to chef"})
+        return
+    }
 
 	ctx.JSON(http.StatusOK, &menuItems)
 }
 
 func DeletOne(ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, gin.H{"menuItem": ""})
+	chef, exists := ctx.Get("chef")
+    if !exists {
+        ctx.JSON(http.StatusForbidden, gin.H{"error": "Invalid chef"})
+        return
+    }
+
+    chefInstance, ok := chef.(*models.Chef)
+    if !ok {
+        ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid chef"})
+        return
+    }
+
+    menuItemIDParam := ctx.Param("id")
+    menuItemID, err := strconv.Atoi(menuItemIDParam)
+    if err != nil {
+        ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid menu item id"})
+        return
+    }
+
+    var menuItem models.MenuItem
+    result := config.DB.First(&menuItem, menuItemID)
+    if result.Error != nil {
+        ctx.JSON(http.StatusNotFound, gin.H{"error": "Menu item not found"})
+        return
+    }
+
+    if menuItem.ChefID != chefInstance.ID {
+        ctx.JSON(http.StatusForbidden, gin.H{"error": "Menu item does not belong to the chef"})
+        return
+    }
+
+    result = config.DB.Delete(&menuItem, menuItemID)
+    if result.Error != nil {
+        ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete menu item"})
+        return
+    }
+
+    ctx.JSON(http.StatusOK, gin.H{"message": "success"})
 }

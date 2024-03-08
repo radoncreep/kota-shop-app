@@ -8,6 +8,7 @@ type Chef struct {
 	LastName string `gorm:"column:last_name;not null"`
 	Email string `gorm:"column:email;uniqueIndex;not null"`
 	PasswordHash string `gorm:"column:password_hash;not null;"`
+	MenuItem []MenuItem 
 	CreatedAt time.Time 
 	UpdatedAt time.Time
 }
