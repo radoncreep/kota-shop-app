@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/radoncreep/apps/kota-backend/models"
@@ -14,30 +15,32 @@ var DB *gorm.DB
 func ConnectAndMigrateDB() {
 	var error error
 
-    // dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s sslmode=disable", 
-	// 	os.Getenv("KOTA_DB_HOST"), 
-	// 	os.Getenv("KOTA_DB_PORT"), 
-	// 	os.Getenv("KOTA_DB_USER"), 
-	// 	os.Getenv("KOTA_DB_PASSWORD"), 
-	// )	
-	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", 
-		"localhost", 
-		os.Getenv("KOTA_DB_PORT"), 
-		"mac", 
-		os.Getenv("KOTA_DB_PASSWORD"), 
-		os.Getenv("KOTA_DB_NAME"),
-	)	
-	DB, error = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	// env included in repository so you dont need to setup yourself
+	dbName := os.Getenv("KOTA_DB_NAME")
+    conn_url := fmt.Sprintf("user=%s password=%s host=%s port=%s sslmode=disable",
+        os.Getenv("KOTA_DB_USER"),
+        os.Getenv("KOTA_DB_PASSWORD"),
+		os.Getenv("KOTA_DB_HOST"),
+        os.Getenv("KOTA_DB_PORT"),
+    )
 
-	if error != nil || DB == nil {
-		fmt.Println("Failed to connect to database")
-	} 
+    conn_db_url := fmt.Sprintf("%s dbname=%s", conn_url, dbName)
+    DB, _ = gorm.Open(postgres.Open(conn_url), &gorm.Config{})
+    count  := 0
+    DB.Raw("SELECT count(*) FROM pg_database WHERE datname = ?", dbName).Scan(&count)
+    if count == 0 {
+        sql :=fmt.Sprintf("CREATE DATABASE %s", dbName)
+        result := DB.Exec(sql) 
+		fmt.Print(result.Error)
+    } else {
+		fmt.Printf("Database %v already exists", dbName)
+	}
 
-	// DB_NAME := os.Getenv("KOTA_DB_NAME")
-    // if err := DB.Exec(fmt.Sprintf("CREATE DATABASE %s", DB_NAME + ";")).Error; err != nil {
-    //     fmt.Println("Failed to create database:", err)
-    //     return
-    // }
+    DB, error = gorm.Open(postgres.Open(conn_db_url), &gorm.Config{})
+	
+	if error != nil {
+		log.Fatalf("Error connecting to database %v: %v", dbName, error)
+	}
 
 	DB.AutoMigrate(&models.Chef{}, &models.MenuItem{})
 }

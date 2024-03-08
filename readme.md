@@ -51,9 +51,9 @@ You should have 3 containers running for the frontend, backend and database.
 - Proper payload validation for routes on the backend
 - the use of refresh tokens for long lived sessions
 - integrate an in-memory database like redis to cache refresh tokens. Probably not responses, not a lot of traffic for this use case
-- use multi-stage build to reduce image size
+- use multi-stage build to reduce image size and volumes to reflect change in development
 - use a cloud storage like s3 to manage images instead of using the app server's file system
-- use charts for more insightful data on the frontend
+- utilize charts for more insightful data on the frontend
 - utilize clean architecture
 
 These might all sound like an overkill but it would be a starter approach for a production ready application
